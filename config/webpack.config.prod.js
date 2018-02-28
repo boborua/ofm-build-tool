@@ -1,12 +1,4 @@
-// @remove-on-eject-begin
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-// @remove-on-eject-end
-'use strict';
+/* eslint-disable indent */
 
 const autoprefixer = require('autoprefixer');
 const path = require('path');
@@ -20,6 +12,8 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+
+const babelrc = require('./babelrc');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -51,7 +45,7 @@ const cssFilename = 'static/css/[name].[contenthash:8].css';
 // To have this structure working with relative paths, we have to use custom options.
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
   ? // Making sure that the publicPath goes back to to build folder.
-    { publicPath: Array(cssFilename.split('/').length).join('../') }
+  { publicPath: Array(cssFilename.split('/').length).join('../') }
   : {};
 
 // This is the production configuration.
@@ -63,8 +57,30 @@ module.exports = {
   // We generate sourcemaps in production. This is slow but gives good results.
   // You can exclude the *.map files from the build during deployment.
   devtool: shouldUseSourceMap ? 'source-map' : false,
-  // In production, we only want to load the polyfills and the app code.
-  entry: [require.resolve('./polyfills'), paths.appIndexJs],
+  entry: {
+    app: paths.appIndexJs,
+    vendor: [
+      'react',
+      'react-dom',
+      'react-redux',
+      'react-router',
+      'redux',
+      'immutable',
+      'moment',
+      'redux-saga',
+      'react-color',
+      'rc-calendar',
+      'rc-table',
+      'rc-select',
+      'rc-menu',
+    ],
+    highchart: [
+      'highcharts/highstock',
+      'highcharts/highcharts-more',
+      'highcharts/modules/map',
+      'highcharts/modules/no-data-to-display',
+    ],
+  },
   output: {
     // The build folder.
     path: paths.appBuild,
@@ -96,20 +112,27 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', 'svg', '.tsx', '.ts'],
     alias: {
       // @remove-on-eject-begin
       // Resolve Babel runtime relative to react-scripts.
       // It usually still works on npm 3 without this but it would be
       // unfortunate to rely on, as react-scripts could be symlinked,
       // and thus babel-runtime might not be resolvable from the source.
-      'babel-runtime': path.dirname(
-        require.resolve('babel-runtime/package.json')
-      ),
-      // @remove-on-eject-end
-      // Support React Native Web
-      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web',
+      // 'babel-runtime': path.dirname(
+      //   require.resolve('babel-runtime/package.json')
+      // ),
+      actions: `${paths.appSrc}/actions/`,
+      components: `${paths.appSrc}/components/`,
+      sources: `${paths.appSrc}/sources/`,
+      stores: `${paths.appSrc}/stores/`,
+      styles: `${paths.appSrc}/styles/`,
+      config: `${paths.appSrc}/config/` + process.env.REACT_WEBPACK_ENV,
+      'react-highchart': `${paths.appSrc}/package/react-highchart/`,
+      'sie-util': `${paths.appSrc}/package/sie-util/`,
+      'version': `${paths.appSrc}/package/version/`,
+      'antd-modify': `${paths.appSrc}/package/antd-modify/`,
+      'sie-design': `${paths.appSrc}/package/sie-design/src/`,
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -137,15 +160,7 @@ module.exports = {
             options: {
               formatter: eslintFormatter,
               eslintPath: require.resolve('eslint'),
-              // @remove-on-eject-begin
-              // TODO: consider separate config for production,
-              // e.g. to enable no-console and no-debugger only in production.
-              baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
-              },
-              ignore: false,
-              useEslintrc: false,
-              // @remove-on-eject-end
+              configFile: path.resolve(__dirname, '.eslintrc'),
             },
             loader: require.resolve('eslint-loader'),
           },
@@ -167,18 +182,40 @@ module.exports = {
               name: 'static/media/[name].[hash:8].[ext]',
             },
           },
+          {
+            test: /\.json$/,
+            include: paths.appSrc,
+            loader: require.resolve('json5-loader'),
+          },
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
-            include: paths.appSrc,
+            include: [paths.appSrc, paths.ownSrc],
             loader: require.resolve('babel-loader'),
             options: {
-              // @remove-on-eject-begin
               babelrc: false,
-              presets: [require.resolve('babel-preset-react-app')],
-              // @remove-on-eject-end
-              compact: true,
+              presets: babelrc.presets,
+              plugins: babelrc.plugins,
+              cacheDirectory: true,
             },
+          },
+          {
+            test: /\.(ts|tsx)$/,
+            include: paths.appSrc,
+            use: [
+              {
+                loader: require.resolve('babel-loader'),
+                options: {
+                  babelrc: false,
+                  presets: babelrc.presets,
+                  plugins: babelrc.plugins,
+                  cacheDirectory: true,
+                },
+              },
+              {
+                loader: require.resolve('ts-loader'),
+              },
+            ],
           },
           // The notation here is somewhat confusing.
           // "postcss" loader applies autoprefixer to our CSS.
@@ -239,6 +276,113 @@ module.exports = {
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
+          {
+            test: /\.modules\.less$/,
+            loader: ExtractTextPlugin.extract(
+              Object.assign(
+                {
+                  fallback: require.resolve('style-loader'),
+                  use: [
+                    {
+                      loader: require.resolve('typings-for-css-modules-loader'),
+                      options: {
+                        importLoaders: 2,
+                        minimize: true,
+                        sourceMap: true,
+                        modules: true,
+                        localIdentName: '[name]_[local]-[hash:base64:8]',
+                        namedExport: true,
+                        camelCase: true,
+                      },
+                    },
+                    {
+                      loader: require.resolve('postcss-loader'),
+                      options: {
+                        ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                        plugins: () => [
+                          require('postcss-flexbugs-fixes'),
+                          autoprefixer({
+                            browsers: [
+                              '>1%',
+                              'last 4 versions',
+                              'Firefox ESR',
+                              'not ie < 9', // React doesn't support IE8 anyway
+                            ],
+                            flexbox: 'no-2009',
+                          }),
+                        ],
+                      },
+                    },
+                    {
+                      loader: require.resolve('less-loader'),
+                      options: {
+                        modifyVars: {
+                          '@primary-color': '#919191',
+                          '@icon-url': '"/fonts/iconfont"',
+                        },
+                        sourceMap: true,
+                      },
+                    },
+                  ],
+                },
+                extractTextPluginOptions
+              )
+            ),
+            // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+          },
+          {
+            exclude: [
+              /\.modules\.less$/,
+            ],
+            test: /\.less$/,
+            loader: ExtractTextPlugin.extract(
+              Object.assign(
+                {
+                  fallback: require.resolve('style-loader'),
+                  use: [
+                    {
+                      loader: require.resolve('css-loader'),
+                      options: {
+                        importLoaders: 2,
+                        minimize: true,
+                        sourceMap: true,
+                      },
+                    },
+                    {
+                      loader: require.resolve('postcss-loader'),
+                      options: {
+                        ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                        plugins: () => [
+                          require('postcss-flexbugs-fixes'),
+                          autoprefixer({
+                            browsers: [
+                              '>1%',
+                              'last 4 versions',
+                              'Firefox ESR',
+                              'not ie < 9', // React doesn't support IE8 anyway
+                            ],
+                            flexbox: 'no-2009',
+                          }),
+                        ],
+                      },
+                    },
+                    {
+                      loader: require.resolve('less-loader'),
+                      options: {
+                        modifyVars: {
+                          '@primary-color': '#697882',
+                          '@icon-url': '"/fonts/iconfont"',
+                        },
+                        sourceMap: true,
+                      },
+                    },
+                  ],
+                },
+                extractTextPluginOptions
+              )
+            ),
+            // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+          },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
           // This loader doesn't use a "test" so it will catch all modules
@@ -284,6 +428,15 @@ module.exports = {
         minifyURLs: true,
       },
     }),
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/),  //   去除moment打包的资源文件/de|fr|hu/
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['vendor', 'highchart'],
+      minChunks: Infinity,
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'runtime',
+    }),
+    new webpack.HashedModuleIdsPlugin(),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
     // It is absolutely essential that NODE_ENV was set to production here.
@@ -339,7 +492,7 @@ module.exports = {
           // https://github.com/facebookincubator/create-react-app/issues/2612
           return;
         }
-        console.log(message);
+        console.log(message); // eslint-disable-line
       },
       minify: true,
       // For unknown URLs, fallback to the index page
@@ -355,7 +508,7 @@ module.exports = {
     // solution that requires the user to opt into importing specific locales.
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -365,5 +518,10 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty',
+  },
+  externals: {
+    jquery: 'window.$',
+    WebSocket: 'window.WebSocket',
+    dcodeIO: 'window.dcodeIO',
   },
 };

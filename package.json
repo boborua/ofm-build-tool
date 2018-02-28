@@ -1,6 +1,6 @@
 {
   "name": "@siesam/build-tool",
-  "version": "0.0.4",
+  "version": "0.0.12",
   "description": "",
   "repository": "",
   "engines": {
@@ -16,10 +16,18 @@
   "bin": {
     "build-tool": "./bin/react-scripts.js"
   },
+  "scripts": {
+    "start": "build-tool start",
+    "build": "build-tool build"
+  },
   "dependencies": {
-    "@babel/core": "7.0.0-beta.38",
-    "@babel/polyfill": "^7.0.0-beta.39",
-    "@babel/runtime": "7.0.0-beta.38",
+    "@babel/core": "~7.0.0-beta.39",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.39",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.39",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.39",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.39",
+    "@babel/polyfill": "~7.0.0-beta.39",
+    "@babel/runtime": "~7.0.0-beta.39",
     "@types/jest": "^22.1.2",
     "@types/node": "^9.4.5",
     "@types/react": "^16.0.36",
@@ -30,7 +38,8 @@
     "babel-eslint": "8.2.1",
     "babel-jest": "22.1.0",
     "babel-loader": "8.0.0-beta.0",
-    "babel-plugin-import": "^1.6.3",
+    "babel-plugin-import": "^1.6.5",
+    "babel-plugin-lodash": "^3.3.2",
     "babel-preset-react-app": "^3.1.1",
     "cache-loader": "^1.2.0",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
@@ -42,11 +51,11 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.15.0",
     "eslint-config-react-app": "^2.1.0",
-    "eslint-loader": "1.9.0",
     "eslint-plugin-flowtype": "2.41.0",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-jsx-a11y": "6.0.3",
     "eslint-plugin-react": "7.5.1",
+    "eslint-loader": "1.9.0",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.6",
     "fork-ts-checker-webpack-plugin": "^0.3.0",
@@ -57,6 +66,8 @@
     "jest": "22.1.2",
     "jest-enzyme": "^4.2.0",
     "json5-loader": "^1.0.1",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.5",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.10",

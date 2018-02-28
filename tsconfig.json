@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "es6",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "outDir": "dist",
+        "allowJs": true,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+        "baseUrl": "./",
+        "paths": {
+            "components/*": ["src/components/*"],
+            "react-highchart/*": ["src/package/react-highchart/*"],
+            "sie-util/*": ["src/package/sie-util/*"],
+            "antd-modify/*": ["src/package/antd-modify/*"],
+            "sie-design": ["src/package/sie-design/src/index"]
+        },
+        "experimentalDecorators": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
