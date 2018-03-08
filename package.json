@@ -1,6 +1,6 @@
 {
   "name": "@siesam/build-tool",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "",
   "repository": "",
   "engines": {
@@ -93,6 +93,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
+    "@siesam/pubgd": "0.0.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2"

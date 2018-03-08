@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
@@ -11,7 +10,10 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
+const getLessLoader = require('./getLessLoader');
+const getLocalIdent = require('@siesam/pubgd/config/getLocalIdent');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
 // const HappyPack = require('happypack');
 const babelrc = require('./babelrc');
 
@@ -183,8 +185,8 @@ module.exports = {
                                     plugins: babelrc.plugins,
                                     cacheDirectory: true,
                                 },
-                            }
-                        ]
+                            },
+                        ],
                     },
                     {
                         test: /\.(ts|tsx)$/,
@@ -193,8 +195,8 @@ module.exports = {
                             {
                                 loader: 'cache-loader',
                                 options: {
-                                    cacheDirectory: path.resolve(__dirname, '../../../../node_modules/.cache-loader')
-                                }
+                                    cacheDirectory: path.resolve(__dirname, '../../../../node_modules/.cache-loader'),
+                                },
                             },
                             {
                                 loader: 'thread-loader',
@@ -235,8 +237,8 @@ module.exports = {
                                         {
                                             loader: 'cache-loader',
                                             options: {
-                                                cacheDirectory: path.resolve('node_modules/.cache-loader')
-                                            }
+                                                cacheDirectory: path.resolve('node_modules/.cache-loader'),
+                                            },
                                         },
                                         {
                                             loader: require.resolve('css-loader'),
@@ -249,7 +251,7 @@ module.exports = {
                                         {
                                             loader: require.resolve('postcss-loader'),
                                             options: {
-                                                ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
+                                                ident: 'postcss',
                                                 plugins: () => [
                                                     require('postcss-flexbugs-fixes'),
                                                     autoprefixer({
@@ -269,7 +271,17 @@ module.exports = {
                                 extractTextPluginOptions
                             )
                         ),
-                        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+                    },
+                    {
+                        test: /\.pubg\.less$/,
+                        loader: ExtractTextPlugin.extract(
+                            Object.assign(
+                                {
+                                    fallback: require.resolve('style-loader'),
+                                    use: getLessLoader(true, getLocalIdent),
+                                }
+                            )
+                        ),
                     },
                     {
                         test: /\.modules\.less$/,
@@ -277,118 +289,27 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: [
-                                        {
-                                            loader: 'cache-loader',
-                                            options: {
-                                                cacheDirectory: path.resolve('node_modules/.cache-loader')
-                                            }
-                                        },
-                                        {
-                                            loader: require.resolve('typings-for-css-modules-loader'),
-                                            options: {
-                                                importLoaders: 2,
-                                                minimize: true,
-                                                sourceMap: true,
-                                                modules: true,
-                                                localIdentName: '[name]_[local]-[hash:base64:8]',
-                                                namedExport: true,
-                                                camelCase: true,
-                                            },
-                                        },
-                                        {
-                                            loader: require.resolve('postcss-loader'),
-                                            options: {
-                                                ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
-                                                plugins: () => [
-                                                    require('postcss-flexbugs-fixes'),
-                                                    autoprefixer({
-                                                        browsers: [
-                                                            '>1%',
-                                                            'last 4 versions',
-                                                            'Firefox ESR',
-                                                            'not ie < 9', // React doesn't support IE8 anyway
-                                                        ],
-                                                        flexbox: 'no-2009',
-                                                    }),
-                                                ],
-                                            },
-                                        },
-                                        {
-                                            loader: require.resolve('less-loader'),
-                                            options: {
-                                                modifyVars: {
-                                                    '@primary-color': '#919191',
-                                                    '@icon-url': '"/fonts/iconfont"',
-                                                },
-                                                sourceMap: true,
-                                            },
-                                        },
-                                    ],
+                                    use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]'),
                                 },
                                 extractTextPluginOptions
                             )
                         ),
-                        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
                     },
                     {
                         exclude: [
                             /\.modules\.less$/,
+                            /\.pubg\.less$/,
                         ],
                         test: /\.less$/,
                         loader: ExtractTextPlugin.extract(
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: [
-                                        {
-                                            loader: 'cache-loader',
-                                            options: {
-                                                cacheDirectory: path.resolve('node_modules/.cache-loader')
-                                            }
-                                        },
-                                        {
-                                            loader: require.resolve('css-loader'),
-                                            options: {
-                                                importLoaders: 2,
-                                                minimize: true,
-                                                sourceMap: true,
-                                            },
-                                        },
-                                        {
-                                            loader: require.resolve('postcss-loader'),
-                                            options: {
-                                                ident: 'postcss', // https://webpack.js.org/guides/migrating/#complex-options
-                                                plugins: () => [
-                                                    require('postcss-flexbugs-fixes'),
-                                                    autoprefixer({
-                                                        browsers: [
-                                                            '>1%',
-                                                            'last 4 versions',
-                                                            'Firefox ESR',
-                                                            'not ie < 9', // React doesn't support IE8 anyway
-                                                        ],
-                                                        flexbox: 'no-2009',
-                                                    }),
-                                                ],
-                                            },
-                                        },
-                                        {
-                                            loader: require.resolve('less-loader'),
-                                            options: {
-                                                modifyVars: {
-                                                    '@primary-color': '#697882',
-                                                    '@icon-url': '"/fonts/iconfont"',
-                                                },
-                                                sourceMap: true,
-                                            },
-                                        },
-                                    ],
+                                    use: getLessLoader(false),
                                 },
                                 extractTextPluginOptions
                             )
                         ),
-                        // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
                     },
                     // "file" loader makes sure those assets get served by WebpackDevServer.
                     // When you `import` an asset, you get its (virtual) filename.
