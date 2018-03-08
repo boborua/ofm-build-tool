@@ -47,7 +47,7 @@ module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentNam
                         '>1%',
                         'last 4 versions',
                         'Firefox ESR',
-                        'not ie < 9', // React doesn't support IE8 anyway
+                        'not ie < 10', // React doesn't support IE8 anyway
                     ],
                     flexbox: 'no-2009',
                 }),
@@ -65,4 +65,6 @@ module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentNam
             sourceMap: true,
         },
     });
+
+    return loaders;
 }
