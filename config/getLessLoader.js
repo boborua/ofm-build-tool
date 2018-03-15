@@ -1,35 +1,45 @@
 const path = require('path');
 const autoprefixer = require('autoprefixer');
 
-module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentName) {
+module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName) {
     const loaders = [];
 
-    loaders.push({
-        loader: 'cache-loader',
-        options: {
-            cacheDirectory: path.resolve('node_modules/.cache-loader'),
-        },
-    });
-
-    if (cssModules) {
+    if (env === 'dev') {
         loaders.push({
-            loader: require.resolve('typings-for-css-modules-loader'),
+            loader: 'cache-loader',
             options: {
-                importLoaders: 2,
-                minimize: true,
-                sourceMap: true,
-                modules: true,
-                getLocalIdent: getLocalIdent,
-                localIdentName: localIdentName,
-                namedExport: true,
-                camelCase: true,
+                cacheDirectory: path.resolve('node_modules/.cache-loader'),
             },
         });
+    }
+
+    if (cssModules) {
+        const options = {
+            importLoaders: 3,
+            minimize: true,
+            sourceMap: true,
+            modules: true,
+            getLocalIdent: getLocalIdent,
+            localIdentName: localIdentName,
+            namedExport: true,
+            camelCase: true,
+        };
+        if (env === 'dev') {
+            loaders.push({
+                loader: require.resolve('typings-for-css-modules-loader'),
+                options: options,
+            })
+        } else {
+            loaders.push({
+                loader: require.resolve('css-loader'),
+                options: options,
+            })
+        }
     } else {
         loaders.push({
             loader: require.resolve('css-loader'),
             options: {
-                importLoaders: 2,
+                importLoaders: 3,
                 minimize: true,
                 sourceMap: true,
             },

@@ -282,7 +282,7 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: getLessLoader(true, getLocalIdent),
+                                    use: getLessLoader('prod', true, getLocalIdent),
                                 }
                             )
                         ),
@@ -293,7 +293,7 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]'),
+                                    use: getLessLoader('prod', true, undefined, '[name]_[local]-[hash:base64:8]'),
                                 },
                                 extractTextPluginOptions
                             )
@@ -309,7 +309,7 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: getLessLoader(false),
+                                    use: getLessLoader('prod', false),
                                 },
                                 extractTextPluginOptions
                             )
@@ -398,6 +398,7 @@ module.exports = {
         // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
         new ExtractTextPlugin({
             filename: cssFilename,
+            allChunks: true,
         }),
         // Generate a manifest file which contains a mapping of all asset filenames
         // to their corresponding output file so that tools can pick it up without

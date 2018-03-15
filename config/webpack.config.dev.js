@@ -278,7 +278,7 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: getLessLoader(true, getLocalIdent),
+                                    use: getLessLoader('dev', true, getLocalIdent, undefined),
                                 }
                             )
                         ),
@@ -289,7 +289,7 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]'),
+                                    use: getLessLoader('dev', true, undefined, '[name]_[local]-[hash:base64:8]'),
                                 },
                                 extractTextPluginOptions
                             )
@@ -305,7 +305,7 @@ module.exports = {
                             Object.assign(
                                 {
                                     fallback: require.resolve('style-loader'),
-                                    use: getLessLoader(false),
+                                    use: getLessLoader('dev', false),
                                 },
                                 extractTextPluginOptions
                             )
