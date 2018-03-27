@@ -1,6 +1,6 @@
 {
   "name": "@siesam/build-tool",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "",
   "repository": "",
   "engines": {
@@ -51,11 +51,11 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.15.0",
     "eslint-config-react-app": "^2.1.0",
+    "eslint-loader": "1.9.0",
     "eslint-plugin-flowtype": "2.41.0",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-jsx-a11y": "6.0.3",
     "eslint-plugin-react": "7.5.1",
-    "eslint-loader": "1.9.0",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.6",
     "fork-ts-checker-webpack-plugin": "^0.3.0",
@@ -81,6 +81,7 @@
     "ts-jest": "^22.0.3",
     "ts-loader": "^3.5.0",
     "tslint": "^5.9.1",
+    "tslint-eslint-rules": "^5.1.0",
     "tslint-loader": "^3.5.3",
     "tslint-react": "^3.4.0",
     "typescript": "^2.7.1",
