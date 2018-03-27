@@ -104,11 +104,7 @@ module.exports = {
             // 'babel-runtime': path.dirname(
             //   require.resolve('babel-runtime/package.json')
             // ),
-            actions: `${paths.appSrc}/actions/`,
-            components: `${paths.appSrc}/components/`,
-            sources: `${paths.appSrc}/sources/`,
-            stores: `${paths.appSrc}/stores/`,
-            styles: `${paths.appSrc}/styles/`,
+            components: `${paths.appSrc}/core/components/`,
             config: `${paths.appSrc}/config/` + process.env.REACT_WEBPACK_ENV,
             'react-highchart': `${paths.appSrc}/package/react-highchart/`,
             'sie-util': `${paths.appSrc}/package/sie-util/`,
