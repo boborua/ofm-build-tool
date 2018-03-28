@@ -107,9 +107,7 @@ module.exports = {
       components: `${paths.appSrc}/core/components/`,
       config: `${paths.appSrc}/config/`,
       'react-highchart': `${paths.appSrc}/package/react-highchart/`,
-      'sie-util': `${paths.appSrc}/package/sie-util/`,
-      'version': `${paths.appSrc}/package/version/`,
-      'antd-modify': `${paths.appSrc}/package/antd-modify/`,
+      'util': `${paths.appSrc}/package/util/`,
       'sie-design': `${paths.appSrc}/package/sie-design/src/`,
     },
     plugins: [
