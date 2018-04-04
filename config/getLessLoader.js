@@ -24,17 +24,10 @@ module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIde
       namedExport: true,
       camelCase: true,
     };
-    if (env === 'dev') {
-      loaders.push({
-        loader: require.resolve('typings-for-css-modules-loader'),
-        options: options,
-      })
-    } else {
-      loaders.push({
-        loader: require.resolve('css-loader'),
-        options: options,
-      })
-    }
+    loaders.push({
+      loader: require.resolve('css-loader'),
+      options: options,
+    })
   } else {
     loaders.push({
       loader: require.resolve('css-loader'),
