@@ -62,7 +62,7 @@ module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIde
     loader: require.resolve('less-loader'),
     options: {
       modifyVars: {
-        '@primary-color': '#697882',
+        '@primary-color': '#23b9b9',
         '@icon-url': '"/fonts/iconfont"',
       },
       sourceMap: true,
