@@ -95,7 +95,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', 'svg', '.tsx', '.ts'],
+    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts'],
     alias: {
       // Resolve Babel runtime relative to react-scripts.
       // It usually still works on npm 3 without this but it would be
@@ -154,6 +154,10 @@ module.exports = {
               limit: 10000,
               name: 'static/media/[name].[hash:8].[ext]',
             },
+          },
+          {
+            test: /\.svg$/,
+            loader: require.resolve('svg-loader'), // Add loader
           },
           {
             test: /\.json$/,
