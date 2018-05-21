@@ -122,7 +122,7 @@ module.exports = {
       // 'babel-runtime': path.dirname(
       //   require.resolve('babel-runtime/package.json')
       // ),
-      components: `${paths.appSrc}/core/components/`,
+      components: `${paths.appSrc}/ad/components/`,
       config: `${paths.appSrc}/config/`,
       'react-highchart': `${paths.appSrc}/package/react-highchart/`,
       'util': `${paths.appSrc}/package/util/`,
