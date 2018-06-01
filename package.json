@@ -1,6 +1,6 @@
 {
   "name": "@siesam/build-tool",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "",
   "repository": "",
   "engines": {
@@ -60,6 +60,7 @@
     "identity-obj-proxy": "3.0.0",
     "jest": "~22.4.3",
     "jest-enzyme": "~6.0.0",
+    "js-yaml-loader": "^0.1.0",
     "json5-loader": "^1.0.1",
     "less": "~2.7.2",
     "less-loader": "~4.1.0",
