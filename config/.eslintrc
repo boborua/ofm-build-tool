@@ -12,35 +12,32 @@
         "jest": true
     },
     "extends": [
+        "react-app",
         "plugin:prettier/recommended",
         "prettier/react",
         "prettier/standard"
     ],
     "rules" : {
-        "comma-dangle": [2, {
-            "arrays": "always-multiline",
-            "objects": "always-multiline",
-            "imports": "never",
-            "exports": "never",
-            "functions": "never"
-        }],
         "no-unused-vars": [2, {
             "varsIgnorePattern": "[iI]gnored",
             "args": "all",
             "argsIgnorePattern": "^_",
             "caughtErrors": "none"
         }],
+        "comma-dangle": [2, {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "ignore"
+        }],
         "no-mixed-spaces-and-tabs" : 2,
         "no-console": 1,
         "no-undef": 2,
-        "indent": ["error", 2, {"SwitchCase": 1}],
         "import/no-extraneous-dependencies":0,
         "no-restricted-syntax": 0,
         "linebreak-style": 0,
-        "react/jsx-filename-extension": 0,
         "class-methods-use-this": 0,
-        "react/jsx-indent-props": [0, 2],
-        "react/jsx-indent": [0, 2],
         "react/forbid-prop-types": 0,
         "jsx-a11y/no-static-element-interactions": 0,
         "jsx-a11y/href-no-hash": 0,

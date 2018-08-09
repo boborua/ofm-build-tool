@@ -19,10 +19,6 @@
     "object-curly-spacing": true,
     "eofline": true,
     "forin": true,
-    "indent": [
-      true,
-      "spaces"
-    ],
     "jsdoc-format": false,
     "label-position": true,
     "max-line-length": [
@@ -88,7 +84,8 @@
     "radix": false,
     "semicolon": [
       true,
-      "always"
+      "always",
+      "ignore-bound-class-methods"
     ],
     "switch-default": true,
     "trailing-comma": [
@@ -141,7 +138,6 @@
     "jsx-no-string-ref": false,
     "jsx-boolean-value": [true, "always"],
     "jsx-wrap-multiline": false,
-    "jsx-no-multiline-js": false,
-    "ter-indent": [true, 2, {"SwitchCase": 1}]
+    "jsx-no-multiline-js": false
   }
 }
