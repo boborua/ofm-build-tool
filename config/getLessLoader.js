@@ -1,18 +1,8 @@
-const path = require('path');
 const autoprefixer = require('autoprefixer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName, shouldUseRelativeAssetPaths) {
+module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentName, shouldUseRelativeAssetPaths) {
   const loaders = [];
-
-  if (env === 'dev') {
-    loaders.push({
-      loader: 'cache-loader',
-      options: {
-        cacheDirectory: path.resolve('node_modules/.cache-loader'),
-      },
-    });
-  }
 
   loaders.push({
     loader: MiniCssExtractPlugin.loader,

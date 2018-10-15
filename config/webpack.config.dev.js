@@ -179,7 +179,7 @@ module.exports = {
           {
             test: /\.(js|jsx|mjs)$/,
             exclude: /@babel(?:\/|\\{1,2})runtime/,
-            include: [paths.appSrc, paths.ownSrc],
+            include: paths.appSrc,
             use: [
               {
                 loader: 'thread-loader',
@@ -200,12 +200,12 @@ module.exports = {
           },
           {
             test: /\.(ts|tsx)$/,
-            include: [paths.appSrc, paths.ownSrc],
+            include: paths.appSrc,
             use: [
               {
                 loader: 'cache-loader',
                 options: {
-                  cacheDirectory: path.resolve(__dirname, 'node_modules/.cache-loader'),
+                  cacheDirectory: path.resolve('node_modules/.cache-loader'),
                 },
               },
               {
@@ -274,16 +274,16 @@ module.exports = {
           },
           {
             test: /\.pubg\.less$/,
-            use: getLessLoader('dev', true, getLocalIdent, undefined, shouldUseRelativeAssetPaths),
+            use: getLessLoader(true, getLocalIdent, undefined, shouldUseRelativeAssetPaths),
           },
           {
             test: /\.modules\.less$/,
-            use: getLessLoader('dev', true, undefined, '[name]_[local]-[hash:base64:8]', shouldUseRelativeAssetPaths),
+            use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]', shouldUseRelativeAssetPaths),
           },
           {
             exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            use: getLessLoader('dev', false, undefined, undefined, shouldUseRelativeAssetPaths),
+            use: getLessLoader(false, undefined, undefined, shouldUseRelativeAssetPaths),
           },
           {
             test: /\.yaml$/,
