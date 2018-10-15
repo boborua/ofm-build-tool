@@ -1,7 +1,8 @@
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const PnpWebpackPlugin = require('pnp-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
@@ -13,6 +14,7 @@ const paths = require('./paths');
 const getLessLoader = require('./getLessLoader');
 const getLocalIdent = require('@siesam/pubgd/config/getLocalIdent');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 // const HappyPack = require('happypack');
 const babelrc = require('./babelrc');
@@ -27,20 +29,13 @@ const publicUrl = '';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
 
-// Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/[name].[contenthash:8].css';
-
 const shouldUseRelativeAssetPaths = publicPath === './';
-
-const extractTextPluginOptions = shouldUseRelativeAssetPaths
-  ? // Making sure that the publicPath goes back to to build folder.
-  { publicPath: Array(cssFilename.split('/').length).join('../') }
-  : {};
 
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
 module.exports = {
+  mode: 'development',
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
   devtool: 'cheap-module-source-map',
@@ -77,8 +72,19 @@ module.exports = {
     // This is the URL that app is served from. We use "/" in development.
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+    devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+  },
+  optimization: {
+    // Automatically split vendor and commons
+    // https://twitter.com/wSokra/status/969633336732905474
+    // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
+    splitChunks: {
+      chunks: 'all',
+      name: false,
+    },
+    // Keep the runtime chunk seperated to enable long term caching
+    // https://twitter.com/wSokra/status/969679223278505985
+    runtimeChunk: true,
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -87,7 +93,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ['node_modules', paths.appNodeModules].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
+      process.env.NODE_PATH.split(path.delimiter).filter(Boolean),
     ),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
@@ -107,10 +113,13 @@ module.exports = {
       components: `${paths.appSrc}/ad/components/`,
       config: `${paths.appSrc}/config/`,
       'react-highchart': `${paths.appSrc}/package/react-highchart/`,
-      'util': `${paths.appSrc}/package/util/`,
+      util: `${paths.appSrc}/package/util/`,
       'sie-design': `${paths.appSrc}/package/sie-design/src/`,
     },
     plugins: [
+      // Adds support for installing with Plug'n'Play, leading to faster installs and adding
+      // guards against forgotten dependencies and such.
+      PnpWebpackPlugin,
       // Prevents users from importing files from outside of src/ (or node_modules/).
       // This often causes confusion because we only process files within src/ with babel.
       // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
@@ -122,6 +131,8 @@ module.exports = {
   module: {
     strictExportPresence: true,
     rules: [
+      // Disable require.ensure as it's not a standard language feature.
+      { parser: { requireEnsure: false } },
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
       {
@@ -156,7 +167,7 @@ module.exports = {
             },
           },
           {
-            test: /\.svg$/,
+            test: /\.pubg\.svg$/,
             loader: require.resolve('svg-loader'), // Add loader
           },
           {
@@ -167,6 +178,7 @@ module.exports = {
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
+            exclude: /@babel(?:\/|\\{1,2})runtime/,
             include: [paths.appSrc, paths.ownSrc],
             use: [
               {
@@ -227,87 +239,51 @@ module.exports = {
           // in development "style" loader enables hot editing of CSS.
           {
             test: /\.css$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: [
-                    {
-                      loader: 'cache-loader',
-                      options: {
-                        cacheDirectory: path.resolve('node_modules/.cache-loader'),
-                      },
-                    },
-                    {
-                      loader: require.resolve('css-loader'),
-                      options: {
-                        importLoaders: 1,
-                        minimize: true,
-                        sourceMap: true,
-                      },
-                    },
-                    {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          autoprefixer({
-                            browsers: [
-                              '>1%',
-                              'last 4 versions',
-                              'Firefox ESR',
-                              'not ie < 9', // React doesn't support IE8 anyway
-                            ],
-                            flexbox: 'no-2009',
-                          }),
-                        ],
-                      },
-                    },
+            use: [
+              {
+                loader: MiniCssExtractPlugin.loader,
+                options: Object.assign({}, shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined),
+              },
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  importLoaders: 1,
+                  minimize: true,
+                  sourceMap: true,
+                },
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9', // React doesn't support IE8 anyway
+                      ],
+                      flexbox: 'no-2009',
+                    }),
                   ],
                 },
-                extractTextPluginOptions
-              )
-            ),
+              },
+            ],
           },
           {
             test: /\.pubg\.less$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: getLessLoader('dev', true, getLocalIdent, undefined),
-                }
-              )
-            ),
+            use: getLessLoader('dev', true, getLocalIdent, undefined, shouldUseRelativeAssetPaths),
           },
           {
             test: /\.modules\.less$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: getLessLoader('dev', true, undefined, '[name]_[local]-[hash:base64:8]'),
-                },
-                extractTextPluginOptions
-              )
-            ),
+            use: getLessLoader('dev', true, undefined, '[name]_[local]-[hash:base64:8]', shouldUseRelativeAssetPaths),
           },
           {
-            exclude: [
-              /\.modules\.less$/,
-              /\.pubg\.less$/,
-            ],
+            exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: getLessLoader('dev', false),
-                },
-                extractTextPluginOptions
-              )
-            ),
+            use: getLessLoader('dev', false, undefined, undefined, shouldUseRelativeAssetPaths),
           },
           {
             test: /\.yaml$/,
@@ -340,21 +316,17 @@ module.exports = {
       async: false,
       tslint: path.resolve(__dirname, 'tslint.json'),
     }),
-    // Makes some environment variables available in index.html.
-    // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
-    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    // In development, this will be an empty string.
-    new InterpolateHtmlPlugin(env.raw),
-    new webpack.WatchIgnorePlugin([
-      /less\.d\.ts$/,
-    ]),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
     }),
-    // Add module names to factory functions so they appear in browser profiler.
-    new webpack.NamedModulesPlugin(),
+    // Makes some environment variables available in index.html.
+    // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
+    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    // In development, this will be an empty string.
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+    new webpack.WatchIgnorePlugin([/less\.d\.ts$/]),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'development') { ... }. See `./env.js`.
     new webpack.DefinePlugin(env.stringified),
@@ -374,12 +346,18 @@ module.exports = {
     // solution that requires the user to opt into importing specific locales.
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
-    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/),  //   去除moment打包的资源文件/de|fr|hu/
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
-    new ExtractTextPlugin({
-      filename: cssFilename,
-      allChunks: true,
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: 'static/css/[name].[contenthash:8].css',
+      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+    }),
+
+    new ManifestPlugin({
+      fileName: 'asset-manifest.json',
+      publicPath: publicPath,
     }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
@@ -394,12 +372,8 @@ module.exports = {
   // Turn off performance hints during development because we don't do any
   // splitting or minification in interest of speed. These warnings become
   // cumbersome.
-  performance: {
-    hints: false,
-  },
+  performance: false,
   externals: {
-    jquery: 'window.$',
     WebSocket: 'window.WebSocket',
-    dcodeIO: 'window.dcodeIO',
   },
 };

@@ -1,7 +1,8 @@
 const path = require('path');
 const autoprefixer = require('autoprefixer');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName) {
+module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName, shouldUseRelativeAssetPaths) {
   const loaders = [];
 
   if (env === 'dev') {
@@ -12,6 +13,11 @@ module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIde
       },
     });
   }
+
+  loaders.push({
+    loader: MiniCssExtractPlugin.loader,
+    options: Object.assign({}, shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined),
+  });
 
   if (cssModules) {
     const options = {
@@ -27,7 +33,7 @@ module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIde
     loaders.push({
       loader: require.resolve('css-loader'),
       options: options,
-    })
+    });
   } else {
     loaders.push({
       loader: require.resolve('css-loader'),
@@ -70,4 +76,4 @@ module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIde
   });
 
   return loaders;
-}
+};

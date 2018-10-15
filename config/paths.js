@@ -22,8 +22,7 @@ function ensureSlash(path, needsSlash) {
   }
 }
 
-const getPublicUrl = appPackageJson =>
-  envPublicUrl || require(appPackageJson).homepage;
+const getPublicUrl = appPackageJson => envPublicUrl || require(appPackageJson).homepage;
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
@@ -33,33 +32,32 @@ const getPublicUrl = appPackageJson =>
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
 function getServedPath(appPackageJson) {
   const publicUrl = getPublicUrl(appPackageJson);
-  const servedUrl =
-    envPublicUrl || (publicUrl ? url.parse(publicUrl).pathname : '/');
+  const servedUrl = envPublicUrl || (publicUrl ? url.parse(publicUrl).pathname : '/');
   return ensureSlash(servedUrl, true);
 }
 
 const resolveOwn = relativePath => path.resolve(__dirname, '..', relativePath);
 
 // config before eject: we're in ./node_modules/react-scripts/config/
-module.exports = {
-  dotenv: resolveApp('.env'),
-  appPath: resolveApp('.'),
-  appBuild: resolveApp('build'),
-  appPublic: resolveApp('public'),
-  appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.js'),
-  appPackageJson: resolveApp('package.json'),
-  ownSrc: resolveOwn('template/src'),
-  appSrc: resolveApp('src'),
-  yarnLockFile: resolveApp('yarn.lock'),
-  testsSetup: resolveApp('src/setupTests.js'),
-  appNodeModules: resolveApp('node_modules'),
-  publicUrl: getPublicUrl(resolveApp('package.json')),
-  servedPath: getServedPath(resolveApp('package.json')),
-  // These properties only exist before ejecting:
-  ownPath: resolveOwn('.'),
-  ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
-};
+// module.exports = {
+//   dotenv: resolveApp('.env'),
+//   appPath: resolveApp('.'),
+//   appBuild: resolveApp('build'),
+//   appPublic: resolveApp('public'),
+//   appHtml: resolveApp('public/index.html'),
+//   appIndexJs: resolveApp('src/index.js'),
+//   appPackageJson: resolveApp('package.json'),
+//   ownSrc: resolveOwn('template/src'),
+//   appSrc: resolveApp('src'),
+//   yarnLockFile: resolveApp('yarn.lock'),
+//   testsSetup: resolveApp('src/setupTests.js'),
+//   appNodeModules: resolveApp('node_modules'),
+//   publicUrl: getPublicUrl(resolveApp('package.json')),
+//   servedPath: getServedPath(resolveApp('package.json')),
+//   // These properties only exist before ejecting:
+//   ownPath: resolveOwn('.'),
+//   ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
+// };
 
 // const ownPackageJson = require('../package.json');
 // const reactScriptsPath = resolveApp(`node_modules/${ownPackageJson.name}`);
@@ -68,23 +66,23 @@ module.exports = {
 //   fs.lstatSync(reactScriptsPath).isSymbolicLink();
 
 // if (!reactScriptsLinked) {
-//   module.exports = {
-//     dotenv: resolveOwn('template/.env'),
-//     appPath: resolveApp('.'),
-//     appBuild: resolveOwn('build'),
-//     appPublic: resolveOwn('template/public'),
-//     appHtml: resolveOwn('template/public/index.html'),
-//     appIndexJs: resolveOwn('template/src/index.js'),
-//     appPackageJson: resolveOwn('package.json'),
-//     ownSrc: resolveOwn('template/src'),
-//     appSrc: resolveApp('src'),
-//     yarnLockFile: resolveOwn('template/yarn.lock'),
-//     testsSetup: resolveOwn('template/src/setupTests.js'),
-//     appNodeModules: resolveOwn('node_modules'),
-//     publicUrl: getPublicUrl(resolveOwn('package.json')),
-//     servedPath: getServedPath(resolveOwn('package.json')),
-//     // These properties only exist before ejecting:
-//     ownPath: resolveOwn('.'),
-//     ownNodeModules: resolveOwn('node_modules'),
-//   };
+module.exports = {
+  dotenv: resolveOwn('template/.env'),
+  appPath: resolveApp('.'),
+  appBuild: resolveOwn('build'),
+  appPublic: resolveOwn('template/public'),
+  appHtml: resolveOwn('template/public/index.html'),
+  appIndexJs: resolveOwn('template/src/index.js'),
+  appPackageJson: resolveOwn('package.json'),
+  ownSrc: resolveOwn('template/src'),
+  appSrc: resolveApp('src'),
+  yarnLockFile: resolveOwn('template/yarn.lock'),
+  testsSetup: resolveOwn('template/src/setupTests.js'),
+  appNodeModules: resolveOwn('node_modules'),
+  publicUrl: getPublicUrl(resolveOwn('package.json')),
+  servedPath: getServedPath(resolveOwn('package.json')),
+  // These properties only exist before ejecting:
+  ownPath: resolveOwn('.'),
+  ownNodeModules: resolveOwn('node_modules'),
+};
 // }
