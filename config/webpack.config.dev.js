@@ -102,20 +102,7 @@ module.exports = {
     // `web` extension prefixes have been added for better support
     // for React Native Web.
     extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts', '.yaml'],
-    alias: {
-      // Resolve Babel runtime relative to react-scripts.
-      // It usually still works on npm 3 without this but it would be
-      // unfortunate to rely on, as react-scripts could be symlinked,
-      // and thus babel-runtime might not be resolvable from the source.
-      // 'babel-runtime': path.dirname(
-      //   require.resolve('babel-runtime/package.json')
-      // ),
-      components: `${paths.appSrc}/ad/components/`,
-      config: `${paths.appSrc}/config/`,
-      'react-highchart': `${paths.appSrc}/package/react-highchart/`,
-      util: `${paths.appSrc}/package/util/`,
-      'sie-design': `${paths.appSrc}/package/sie-design/src/`,
-    },
+    alias: {},
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
       // guards against forgotten dependencies and such.

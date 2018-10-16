@@ -8,6 +8,7 @@ const url = require('url');
 // https://github.com/facebookincubator/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveBuildTool = relativePath => path.resolve(__dirname, '..', relativePath);
 
 const envPublicUrl = process.env.PUBLIC_URL;
 
@@ -36,17 +37,18 @@ function getServedPath(appPackageJson) {
   return ensureSlash(servedUrl, true);
 }
 
+const isBuildTool = require(resolveApp('package.json')).name === '@siesam/build-tool';
+
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
   appBuild: resolveApp('build'),
-  appPublic: resolveApp('template/public'),
-  appHtml: resolveApp('template/public/index.html'),
-  appIndexJs: resolveApp('template/src/index.js'),
+  appPublic: resolveBuildTool('template/public'),
+  appHtml: resolveBuildTool('template/public/index.html'),
+  appIndexJs: isBuildTool ? resolveApp('template/src/index.js') : resolveApp('src/index.js'),
   appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp('template/src'),
-  yarnLockFile: resolveApp('template/yarn.lock'),
-  testsSetup: resolveApp('template/src/setupTests.js'),
+  appSrc: isBuildTool ? resolveApp('template/src') : resolveApp('src'),
+  yarnLockFile: resolveApp('yarn.lock'),
   appNodeModules: resolveApp('node_modules'),
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),

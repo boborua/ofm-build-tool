@@ -23,8 +23,9 @@ const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const { choosePort, createCompiler, prepareProxy, prepareUrls } = require('react-dev-utils/WebpackDevServerUtils');
 const openBrowser = require('react-dev-utils/openBrowser');
 const paths = require('../config/paths');
-const config = require('../config/webpack.config.dev');
 const createDevServerConfig = require('../config/webpackDevServer.config');
+const getCustomWebpackConfig = require('./utils/getCustomWebpackConfig');
+const config = getCustomWebpackConfig(paths.appPath, require('../config/webpack.config.dev'));
 
 const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
