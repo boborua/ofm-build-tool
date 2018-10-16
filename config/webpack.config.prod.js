@@ -2,16 +2,21 @@ const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const PnpWebpackPlugin = require('pnp-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const safePostCssParser = require('postcss-safe-parser');
+const TerserPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const getLessLoader = require('./getLessLoader');
 const getLocalIdent = require('@siesam/pubgd/config/getLocalIdent');
+const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 
 const babelrc = require('./babelrc');
 
@@ -36,22 +41,11 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
   throw new Error('Production builds must have NODE_ENV=production.');
 }
 
-// Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/[name].[contenthash:8].css';
-
-// ExtractTextPlugin expects the build output to be flat.
-// (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
-// However, our output is structured with css, js and media folders.
-// To have this structure working with relative paths, we have to use custom options.
-const extractTextPluginOptions = shouldUseRelativeAssetPaths
-  ? // Making sure that the publicPath goes back to to build folder.
-  { publicPath: Array(cssFilename.split('/').length).join('../') }
-  : {};
-
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
 module.exports = {
+  mode: 'production',
   // Don't attempt to continue if there are any errors.
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
@@ -59,27 +53,6 @@ module.exports = {
   devtool: shouldUseSourceMap ? 'source-map' : false,
   entry: {
     app: paths.appIndexJs,
-    vendor: [
-      'react',
-      'react-dom',
-      'react-redux',
-      'react-router',
-      'redux',
-      'immutable',
-      'moment',
-      'redux-saga',
-      'react-color',
-      'rc-calendar',
-      'rc-table',
-      'rc-select',
-      'rc-menu',
-    ],
-    highchart: [
-      'highcharts/highstock',
-      'highcharts/highcharts-more',
-      'highcharts/modules/map',
-      'highcharts/modules/no-data-to-display',
-    ],
   },
   output: {
     // The build folder.
@@ -92,10 +65,84 @@ module.exports = {
     // We inferred the "public path" (such as / or /my-project) from homepage.
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info =>
-      path
-        .relative(paths.appSrc, info.absoluteResourcePath)
-        .replace(/\\/g, '/'),
+    devtoolModuleFilenameTemplate: info => path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/'),
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          parse: {
+            // we want terser to parse ecma 8 code. However, we don't want it
+            // to apply any minfication steps that turns valid ecma 5 code
+            // into invalid ecma 5 code. This is why the 'compress' and 'output'
+            // sections only apply transformations that are ecma 5 safe
+            // https://github.com/facebook/create-react-app/pull/4234
+            ecma: 8,
+          },
+          compress: {
+            ecma: 5,
+            warnings: false,
+            // Disabled because of an issue with Uglify breaking seemingly valid code:
+            // https://github.com/facebook/create-react-app/issues/2376
+            // Pending further investigation:
+            // https://github.com/mishoo/UglifyJS2/issues/2011
+            comparisons: false,
+            // Disabled because of an issue with Terser breaking valid code:
+            // https://github.com/facebook/create-react-app/issues/5250
+            // Pending futher investigation:
+            // https://github.com/terser-js/terser/issues/120
+            inline: 2,
+          },
+          mangle: {
+            safari10: true,
+          },
+          output: {
+            ecma: 5,
+            comments: false,
+            // Turned on because emoji and regex is not minified properly using default
+            // https://github.com/facebook/create-react-app/issues/2488
+            ascii_only: true,
+          },
+        },
+        // Use multi-process parallel running to improve the build speed
+        // Default number of concurrent runs: os.cpus().length - 1
+        parallel: true,
+        // Enable file caching
+        cache: true,
+        sourceMap: shouldUseSourceMap,
+      }),
+      new OptimizeCSSAssetsPlugin({
+        cssProcessorOptions: {
+          parser: safePostCssParser,
+          map: shouldUseSourceMap
+            ? {
+                // `inline: false` forces the sourcemap to be output into a
+                // separate file
+                inline: false,
+                // `annotation: true` appends the sourceMappingURL to the end of
+                // the css file, helping the browser find the sourcemap
+                annotation: true,
+              }
+            : false,
+        },
+      }),
+    ],
+    // Automatically split vendor and commons
+    // https://twitter.com/wSokra/status/969633336732905474
+    // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
+    splitChunks: {
+      cacheGroups: {
+        react: {
+          chunks: 'initial',
+          name: 'react',
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          enforce: true,
+        },
+      },
+    },
+    // Keep the runtime chunk seperated to enable long term caching
+    // https://twitter.com/wSokra/status/969679223278505985
+    runtimeChunk: 'single',
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -104,7 +151,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ['node_modules', paths.appNodeModules].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
+      process.env.NODE_PATH.split(path.delimiter).filter(Boolean),
     ),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
@@ -114,21 +161,16 @@ module.exports = {
     // for React Native Web.
     extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts', '.yaml'],
     alias: {
-      // @remove-on-eject-begin
-      // Resolve Babel runtime relative to react-scripts.
-      // It usually still works on npm 3 without this but it would be
-      // unfortunate to rely on, as react-scripts could be symlinked,
-      // and thus babel-runtime might not be resolvable from the source.
-      // 'babel-runtime': path.dirname(
-      //   require.resolve('babel-runtime/package.json')
-      // ),
       components: `${paths.appSrc}/ad/components/`,
       config: `${paths.appSrc}/config/`,
       'react-highchart': `${paths.appSrc}/package/react-highchart/`,
-      'util': `${paths.appSrc}/package/util/`,
+      util: `${paths.appSrc}/package/util/`,
       'sie-design': `${paths.appSrc}/package/sie-design/src/`,
     },
     plugins: [
+      // Adds support for installing with Plug'n'Play, leading to faster installs and adding
+      // guards against forgotten dependencies and such.
+      PnpWebpackPlugin,
       // Prevents users from importing files from outside of src/ (or node_modules/).
       // This often causes confusion because we only process files within src/ with babel.
       // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
@@ -137,12 +179,18 @@ module.exports = {
       new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
     ],
   },
+  resolveLoader: {
+    plugins: [
+      // Also related to Plug'n'Play, but this time it tells Webpack to load its loaders
+      // from the current package.
+      PnpWebpackPlugin.moduleLoader(module),
+    ],
+  },
   module: {
     strictExportPresence: true,
     rules: [
-      // TODO: Disable require.ensure as it's not a standard language feature.
-      // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
-      // { parser: { requireEnsure: false } },
+      // Disable require.ensure as it's not a standard language feature.
+      { parser: { requireEnsure: false } },
 
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
@@ -177,7 +225,7 @@ module.exports = {
             },
           },
           {
-            test: /\.svg$/,
+            test: /\.pubg\.svg$/,
             loader: require.resolve('svg-loader'), // Add loader
           },
           {
@@ -188,7 +236,8 @@ module.exports = {
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
-            include: [paths.appSrc, paths.ownSrc],
+            exclude: /@babel(?:\/|\\{1,2})runtime/,
+            include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
               babelrc: false,
@@ -229,89 +278,53 @@ module.exports = {
           // in the main CSS file.
           {
             test: /\.css$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: {
-                    loader: require.resolve('style-loader'),
-                    options: {
-                      hmr: false,
-                    },
-                  },
-                  use: [
-                    {
-                      loader: require.resolve('css-loader'),
-                      options: {
-                        importLoaders: 1,
-                        minimize: true,
-                        sourceMap: shouldUseSourceMap,
-                      },
-                    },
-                    {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebookincubator/create-react-app/issues/2677
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          autoprefixer({
-                            browsers: [
-                              '>1%',
-                              'last 4 versions',
-                              'Firefox ESR',
-                              'not ie < 9', // React doesn't support IE8 anyway
-                            ],
-                            flexbox: 'no-2009',
-                          }),
-                        ],
-                      },
-                    },
+            use: [
+              {
+                loader: MiniCssExtractPlugin.loader,
+                options: Object.assign({}, shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined),
+              },
+              {
+                loader: require.resolve('css-loader'),
+                options: {
+                  importLoaders: 1,
+                  minimize: true,
+                  sourceMap: shouldUseSourceMap,
+                },
+              },
+              {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                  // Necessary for external CSS imports to work
+                  // https://github.com/facebookincubator/create-react-app/issues/2677
+                  ident: 'postcss',
+                  plugins: () => [
+                    require('postcss-flexbugs-fixes'),
+                    autoprefixer({
+                      browsers: [
+                        '>1%',
+                        'last 4 versions',
+                        'Firefox ESR',
+                        'not ie < 9', // React doesn't support IE8 anyway
+                      ],
+                      flexbox: 'no-2009',
+                    }),
                   ],
                 },
-                extractTextPluginOptions
-              )
-            ),
-            // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+              },
+            ],
           },
           {
             test: /\.pubg\.less$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: getLessLoader('prod', true, getLocalIdent),
-                }
-              )
-            ),
+            use: getLessLoader(true, getLocalIdent),
           },
           {
             test: /\.modules\.less$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: getLessLoader('prod', true, undefined, '[name]_[local]-[hash:base64:8]'),
-                },
-                extractTextPluginOptions
-              )
-            ),
+            use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]'),
           },
           {
-            exclude: [
-              /\.modules\.less$/,
-              /\.pubg\.less$/,
-            ],
+            exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: getLessLoader('prod', false),
-                },
-                extractTextPluginOptions
-              )
-            ),
+            use: getLessLoader(false),
           },
           {
             test: /\.yaml$/,
@@ -339,12 +352,6 @@ module.exports = {
     ],
   },
   plugins: [
-    // Makes some environment variables available in index.html.
-    // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
-    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    // In production, it will be an empty string unless you specify "homepage"
-    // in `package.json`, in which case it will be the pathname of that URL.
-    new InterpolateHtmlPlugin(env.raw),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
@@ -362,88 +369,42 @@ module.exports = {
         minifyURLs: true,
       },
     }),
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/),  //   去除moment打包的资源文件/de|fr|hu/
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'highchart'],
-      minChunks: Infinity,
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'runtime',
-    }),
-    new webpack.HashedModuleIdsPlugin(),
+    // Inlines the webpack runtime script. This script is too small to warrant
+    // a network request.
+    new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/]),
+    // Makes some environment variables available in index.html.
+    // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
+    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    // In production, it will be an empty string unless you specify "homepage"
+    // in `package.json`, in which case it will be the pathname of that URL.
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+    // This gives some necessary context to module not found errors, such as
+    // the requesting resource.
+    new ModuleNotFoundPlugin(paths.appPath),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin(env.stringified),
-    // Minify the code.
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
-        // https://github.com/facebookincubator/create-react-app/issues/2376
-        // Pending further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false,
-      },
-      mangle: {
-        safari10: true,
-      },
-      output: {
-        comments: false,
-        // Turned on because emoji and regex is not minified properly using default
-        // https://github.com/facebookincubator/create-react-app/issues/2488
-        ascii_only: true,
-      },
-      sourceMap: shouldUseSourceMap,
-    }),
-    // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
-    new ExtractTextPlugin({
-      filename: cssFilename,
-      allChunks: true,
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: 'static/css/[name].[contenthash:8].css',
+      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
     }),
     // Generate a manifest file which contains a mapping of all asset filenames
     // to their corresponding output file so that tools can pick it up without
     // having to parse `index.html`.
     new ManifestPlugin({
       fileName: 'asset-manifest.json',
-    }),
-    // Generate a service worker script that will precache, and keep up to date,
-    // the HTML & assets that are part of the Webpack build.
-    new SWPrecacheWebpackPlugin({
-      // By default, a cache-busting query parameter is appended to requests
-      // used to populate the caches, to ensure the responses are fresh.
-      // If a URL is already hashed by Webpack, then there is no concern
-      // about it being stale, and the cache-busting can be skipped.
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: 'service-worker.js',
-      logger(message) {
-        if (message.indexOf('Total precache size is') === 0) {
-          // This message occurs for every build and is a bit too noisy.
-          return;
-        }
-        if (message.indexOf('Skipping static resource') === 0) {
-          // This message obscures real errors so we ignore it.
-          // https://github.com/facebookincubator/create-react-app/issues/2612
-          return;
-        }
-                console.log(message); // eslint-disable-line
-      },
-      minify: true,
-      // For unknown URLs, fallback to the index page
-      navigateFallback: publicUrl + '/index.html',
-      // Ignores URLs starting from /__ (useful for Firebase):
-      // https://github.com/facebookincubator/create-react-app/issues/2237#issuecomment-302693219
-      navigateFallbackWhitelist: [/^(?!\/__).*/],
-      // Don't precache sourcemaps (they're large) and build asset manifest:
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
+      publicPath: publicPath,
     }),
     // Moment.js is an extremely popular library that bundles large locale files
     // by default due to how Webpack interprets its code. This is a practical
     // solution that requires the user to opt into importing specific locales.
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
-    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
@@ -455,8 +416,6 @@ module.exports = {
     child_process: 'empty',
   },
   externals: {
-    jquery: 'window.$',
     WebSocket: 'window.WebSocket',
-    dcodeIO: 'window.dcodeIO',
   },
 };
