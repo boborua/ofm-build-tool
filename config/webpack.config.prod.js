@@ -223,6 +223,7 @@ module.exports = {
             loader: require.resolve('svg-loader'), // Add loader
           },
           {
+            type: 'javascript/auto',
             test: /\.json$/,
             include: paths.appSrc,
             loader: require.resolve('json5-loader'),
