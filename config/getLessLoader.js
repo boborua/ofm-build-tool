@@ -1,7 +1,7 @@
 const autoprefixer = require('autoprefixer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentName, shouldUseRelativeAssetPaths) {
+module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName, shouldUseRelativeAssetPaths) {
   const loaders = [];
 
   loaders.push({
@@ -59,7 +59,8 @@ module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentNam
     options: {
       modifyVars: {
         '@primary-color': '#23b9b9',
-        '@icon-url': '"/fonts/iconfont"',
+        '@icon-url': `"${env.raw.PUBLIC_URL}/fonts/iconfont"`,
+        '@pubg-icon-url': `"${env.raw.PUBLIC_URL}/fonts/pubg"`,
       },
       sourceMap: true,
     },

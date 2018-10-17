@@ -261,16 +261,16 @@ module.exports = {
           },
           {
             test: /\.pubg\.less$/,
-            use: getLessLoader(true, getLocalIdent, undefined, shouldUseRelativeAssetPaths),
+            use: getLessLoader(env, true, getLocalIdent, undefined, shouldUseRelativeAssetPaths),
           },
           {
             test: /\.modules\.less$/,
-            use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]', shouldUseRelativeAssetPaths),
+            use: getLessLoader(env, true, undefined, '[name]_[local]-[hash:base64:8]', shouldUseRelativeAssetPaths),
           },
           {
             exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            use: getLessLoader(false, undefined, undefined, shouldUseRelativeAssetPaths),
+            use: getLessLoader(env, false, undefined, undefined, shouldUseRelativeAssetPaths),
           },
           {
             test: /\.yaml$/,

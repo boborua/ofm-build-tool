@@ -309,16 +309,16 @@ module.exports = {
           },
           {
             test: /\.pubg\.less$/,
-            use: getLessLoader(true, getLocalIdent),
+            use: getLessLoader(env, true, getLocalIdent),
           },
           {
             test: /\.modules\.less$/,
-            use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]'),
+            use: getLessLoader(env, true, undefined, '[name]_[local]-[hash:base64:8]'),
           },
           {
             exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            use: getLessLoader(false),
+            use: getLessLoader(env, false),
           },
           {
             test: /\.yaml$/,
