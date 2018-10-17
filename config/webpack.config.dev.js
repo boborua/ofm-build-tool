@@ -12,7 +12,7 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const getLessLoader = require('./getLessLoader');
-const getLocalIdent = require('@siesam/pubgd/config/getLocalIdent');
+const getLocalIdent = require('./getLocalIdent');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 
@@ -116,7 +116,6 @@ module.exports = {
     ],
   },
   module: {
-    strictExportPresence: true,
     rules: [
       // Disable require.ensure as it's not a standard language feature.
       { parser: { requireEnsure: false } },

@@ -14,7 +14,7 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const getLessLoader = require('./getLessLoader');
-const getLocalIdent = require('@siesam/pubgd/config/getLocalIdent');
+const getLocalIdent = require('./getLocalIdent');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 
@@ -181,7 +181,6 @@ module.exports = {
     ],
   },
   module: {
-    strictExportPresence: true,
     rules: [
       // Disable require.ensure as it's not a standard language feature.
       { parser: { requireEnsure: false } },
