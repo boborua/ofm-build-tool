@@ -102,7 +102,9 @@ module.exports = {
     // `web` extension prefixes have been added for better support
     // for React Native Web.
     extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts', '.yaml'],
-    alias: {},
+    alias: {
+      config: `${paths.appSrc}/config/`,
+    },
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
       // guards against forgotten dependencies and such.

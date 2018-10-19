@@ -2,6 +2,7 @@ import * as React from 'react';
 import logo from './logo.svg';
 import './App.less';
 import * as css from './App.modules.less';
+import config from 'config';
 
 class App extends React.Component {
   render() {
@@ -20,6 +21,9 @@ class App extends React.Component {
           >
             Learn React
           </a>
+          <p>
+            version: {config.version}
+          </p>
         </header>
       </div>
     );

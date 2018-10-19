@@ -8,7 +8,6 @@ const url = require('url');
 // https://github.com/facebookincubator/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
-const resolveBuildTool = relativePath => path.resolve(__dirname, '..', relativePath);
 
 const envPublicUrl = process.env.PUBLIC_URL;
 
@@ -43,8 +42,8 @@ module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
   appBuild: resolveApp('build'),
-  appPublic: resolveBuildTool('template/public'),
-  appHtml: resolveBuildTool('template/public/index.html'),
+  appPublic: isBuildTool ? resolveApp('template/public') : resolveApp('public'),
+  appHtml: isBuildTool ? resolveApp('template/public/index.html') : resolveApp('public/index.html'),
   appIndexJs: isBuildTool ? resolveApp('template/src/index.js') : resolveApp('src/index.js'),
   appPackageJson: resolveApp('package.json'),
   appSrc: isBuildTool ? resolveApp('template/src') : resolveApp('src'),

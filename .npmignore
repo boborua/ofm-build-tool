@@ -1,1 +1,4 @@
+build
 
+!tsconfig.json
+!webpack.config.js

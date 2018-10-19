@@ -1,4 +1,11 @@
 {
-    "git.ignoreLimitWarning": true,
-    "eslint.options": { "configFile": "config\\.eslintrc" },
+  "js-import.root": "src",
+  "js-import.alias": {
+    "config": "src/config"
+  },
+  "js-import.codeCompletionAction": false,
+  "js-import.filesToScan": "**/*.{jsx,tsx,js,ts}",
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "eslint.options": { "configFile": "node_modules\\@siesam\\build-tool\\config\\.eslintrc" },
+  "tslint.configFile": "node_modules\\@siesam\\build-tool\\config\\tslint.json"
 }
