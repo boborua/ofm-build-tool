@@ -39,8 +39,7 @@ function create(appName, appPath) {
   appPackage.privete = true;
 
   appPackage.dependencies = {
-    '@siesam/ajax': '0.0.4',
-    '@siesam/build-tool': '0.1.0-beta-8',
+    '@siesam/ajax': '0.1.0',
     '@siesam/history': '0.0.4',
     '@siesam/pubgd': '0.1.0-beta-3',
     antd: '^3.10.0',
@@ -55,17 +54,17 @@ function create(appName, appPath) {
     'react-redux-loading-bar': '2.9.3',
     'react-router-dom': '^4.3.1',
     resa: '^4.0.0-beta-5',
-    typescript: '^3.1.1',
-    'postcss-cli': '^6.0.1',
-    'postcss-sorting': '^4.0.0',
   };
 
   appPackage.devDependencies = {
-    '@types/jest': '^22.2.3',
     '@types/node': '^9.6.6',
     '@types/react': '^16.4.16',
     '@types/react-dom': '^16.0.9',
     '@types/react-router-dom': '^4.3.0',
+    '@siesam/build-tool': '0.1.0-beta-10',
+    typescript: '^3.1.1',
+    'postcss-cli': '^6.0.1',
+    'postcss-sorting': '^4.0.0',
   };
 
   // Setup the script rules
@@ -82,7 +81,12 @@ function create(appName, appPath) {
 
   appPackage.jest = {
     moduleNameMapper: {
-      'config': '<rootDir>/src/config/index',
+      config: '<rootDir>/src/config/index',
+    },
+    globals: {
+      'ts-jest': {
+        tsConfig: 'tsconfig.test.json',
+      },
     },
   };
 
@@ -113,6 +117,17 @@ function create(appName, appPath) {
     config: ['src/config/index'],
   };
   fs.writeFileSync(path.join(appPath, 'tsconfig.json'), JSON.stringify(tsConfig, null, 2) + os.EOL);
+
+  const tsTestConfig = {
+    extends: './tsconfig.json',
+    compilerOptions: {
+      module: 'commonjs',
+      jsx: 'react',
+      target: 'es5',
+      esModuleInterop: true,
+    },
+  };
+  fs.writeFileSync(path.join(appPath, 'tsconfig.test.json'), JSON.stringify(tsTestConfig, null, 2) + os.EOL);
 
   fs.copySync(path.join(ownPath, 'webpack.config.js'), path.join(appPath, 'webpack.config.js'));
 

@@ -10,7 +10,7 @@ module.exports = (resolve, rootDir) => {
       '<rootDir>/src/**/__tests__/**/*.ts?(x)',
       '<rootDir>/src/**/?(*.)(spec|test).ts?(x)',
     ],
-    setupTestFrameworkScriptFile: resolve('scripts/utils/setupTests.js'),
+    setupTestFrameworkScriptFile: '<rootDir>/scripts/setupTests.js',
     testEnvironment: 'jsdom',
     testURL: 'http://localhost',
     transform: {

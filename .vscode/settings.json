@@ -7,5 +7,6 @@
   "js-import.filesToScan": "**/*.{jsx,tsx,js,ts}",
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "eslint.options": { "configFile": "node_modules\\@siesam\\build-tool\\config\\.eslintrc" },
-  "tslint.configFile": "node_modules\\@siesam\\build-tool\\config\\tslint.json"
+  "tslint.configFile": "node_modules\\@siesam\\build-tool\\config\\tslint.json",
+  "debug.node.autoAttach": "on"
 }

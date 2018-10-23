@@ -16,10 +16,10 @@ require('../config/env');
 const jest = require('jest');
 const argv = process.argv.slice(2);
 
-// Watch unless on CI or in coverage mode
-if (!process.env.CI && argv.indexOf('--coverage') < 0) {
-  argv.push('--watchAll');
-}
+// Watch Mode cause vscode can't find breakpoint
+// if (!process.env.CI && argv.indexOf('--coverage') < 0) {
+//   argv.push('--watchAll');
+// }
 
 const createJestConfig = require('./utils/createJestConfig');
 const path = require('path');

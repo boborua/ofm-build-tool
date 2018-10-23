@@ -19,9 +19,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true,
-    "paths": {
-      "config": ["template/src/config/index"]
-    },
     "experimentalDecorators": true,
     "noUnusedParameters": true
   },

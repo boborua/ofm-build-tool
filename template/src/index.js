@@ -1,3 +1,8 @@
+/**
+ * set up config before all code run
+ */
+import './config';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';

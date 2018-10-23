@@ -17,4 +17,4 @@ if (process.env.NODE_ENV === 'development') {
   config = dist;
 }
 
-export default config;
+global.env = config;
