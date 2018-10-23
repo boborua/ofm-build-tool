@@ -61,7 +61,7 @@ function create(appName, appPath) {
     '@types/react': '^16.4.16',
     '@types/react-dom': '^16.0.9',
     '@types/react-router-dom': '^4.3.0',
-    '@siesam/build-tool': '0.1.0-beta-10',
+    '@siesam/build-tool': '^0.1.0',
     typescript: '^3.1.1',
     'postcss-cli': '^6.0.1',
     'postcss-sorting': '^4.0.0',
@@ -80,9 +80,6 @@ function create(appName, appPath) {
   };
 
   appPackage.jest = {
-    moduleNameMapper: {
-      config: '<rootDir>/src/config/index',
-    },
     globals: {
       'ts-jest': {
         tsConfig: 'tsconfig.test.json',

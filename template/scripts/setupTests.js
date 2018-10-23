@@ -5,7 +5,7 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
 
-const source = fs.readFileSync(path.join(__dirname , '../src/config/dist.yaml'), { encoding: 'utf-8'});
+const source = fs.readFileSync(path.join(__dirname, '../src/config/dist.yaml'), { encoding: 'utf-8' });
 
 global.env = yaml.safeLoad(source);
 
