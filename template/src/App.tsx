@@ -12,17 +12,10 @@ class App extends React.Component {
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>
-          <a
-            className={css.appLink}
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a className={css.appLink} href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
             Learn React
           </a>
-          <p>
-            version: {global.env.version}
-          </p>
+          <p>version: {global.env.version}</p>
         </header>
       </div>
     );

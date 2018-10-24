@@ -12,5 +12,5 @@ it('global env should not be modify', () => {
       expect(global.env.version).toBe('dist');
       resolve(true);
     }, 4000);
-  })
+  });
 });

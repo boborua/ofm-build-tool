@@ -7,6 +7,53 @@ process.on('unhandledRejection', err => {
 const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
+const execSync = require('child_process').execSync;
+
+function isInGitRepository() {
+  try {
+    execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore', cwd: appPath });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function tryGitInit(appPath) {
+  let didInit = false;
+  const options = {
+    cwd: appPath
+  }
+  try {
+    execSync('git --version', { stdio: 'ignore', cwd: appPath });
+    if (isInGitRepository(appPath)) {
+      return false;
+    }
+
+    execSync('git init', { stdio: 'ignore', cwd: appPath });
+    didInit = true;
+
+    execSync('git add -A', { stdio: 'ignore', cwd: appPath });
+    execSync('git commit -m "Initial commit from Build Tool"', {
+      stdio: 'ignore', cwd: appPath
+    });
+    return true;
+  } catch (e) {
+    if (didInit) {
+      // If we successfully initialized but couldn't commit,
+      // maybe the commit author config is not set.
+      // In the future, we might supply our own committer
+      // like Ember CLI does, but for now, let's just
+      // remove the Git files to avoid a half-done state.
+      try {
+        // unlinkSync() doesn't work on directories.
+        fs.removeSync(path.join(appPath, '.git'));
+      } catch (removeErr) {
+        // Ignore.
+      }
+    }
+    return false;
+  }
+}
 
 const args = process.argv.slice(2);
 
@@ -20,12 +67,7 @@ if (typeof projectName === 'undefined') {
 
 const projectPath = path.join(rootDir, projectName);
 
-if (fs.existsSync(projectPath)) {
-  console.error(`Project Name: ${projectName} is exist in ${projectPath}.`);
-  process.exit(1);
-} else {
-  fs.ensureDirSync(projectPath);
-}
+fs.ensureDirSync(projectPath);
 
 create(projectName, path.join(rootDir, projectName));
 
@@ -61,10 +103,8 @@ function create(appName, appPath) {
     '@types/react': '^16.4.16',
     '@types/react-dom': '^16.0.9',
     '@types/react-router-dom': '^4.3.0',
-    '@siesam/build-tool': '^0.1.0',
+    '@siesam/build-tool': '^0.1.1',
     typescript: '^3.1.1',
-    'postcss-cli': '^6.0.1',
-    'postcss-sorting': '^4.0.0',
   };
 
   // Setup the script rules
@@ -74,9 +114,9 @@ function create(appName, appPath) {
     check: 'node ./scripts/check',
     test: 'build-tool test --env=jsdom',
     locale: 'i18n-backend --url https://www.betameo.com/i18n/api/json/project/demo',
-    'fix-prettier': 'prettier --write ./src/**/*.{ts,js,tsx,jsx,css,less}',
-    'fix-postcss': 'postcss -c postcss.config.js  --no-map -r ./src/**/*.{css,less}',
-    'fix-lint': 'npm run fix-postcss && npm run fix-prettier',
+    'fix-stylelint': 'stylelint ./src/**/*.{css,less} --fix',
+    'fix-prettier': 'prettier --write ./src/**/*.{ts,js,tsx,jsx,less,css}',
+    'fix-lint': 'npm run fix-stylelint && npm run fix-prettier',
   };
 
   appPackage.jest = {
@@ -94,7 +134,7 @@ function create(appName, appPath) {
     },
   };
   appPackage['lint-staged'] = {
-    '*.{css,less}': ['postcss -c postcss.config.js  --no-map -r', 'prettier --write', 'git add'],
+    '*.{css,less}': ['stylelint --fix', 'prettier --write', 'git add'],
     '*.{ts,js,tsx,jsx}': ['prettier --write', 'git add'],
   };
 
@@ -107,13 +147,7 @@ function create(appName, appPath) {
 
   fs.copySync(path.join(ownPath, '.gitignore'), path.join(appPath, '.gitignore'), { overwrite: true });
 
-  fs.copySync(path.join(ownPath, 'postcss.config.js'), path.join(appPath, 'postcss.config.js'));
-
-  const tsConfig = require(path.join(ownPath, 'tsconfig.json'));
-  tsConfig.compilerOptions.paths = {
-    config: ['src/config/index'],
-  };
-  fs.writeFileSync(path.join(appPath, 'tsconfig.json'), JSON.stringify(tsConfig, null, 2) + os.EOL);
+  fs.copySync(path.join(ownPath, 'tsconfig.json'), path.join(appPath, 'tsconfig.json'));
 
   const tsTestConfig = {
     extends: './tsconfig.json',
@@ -130,5 +164,14 @@ function create(appName, appPath) {
 
   fs.copySync(path.join(ownPath, '.prettierrc'), path.join(appPath, '.prettierrc'));
 
+  fs.copySync(path.join(ownPath, '.editorconfig'), path.join(appPath, '.editorconfig'));
+
+  fs.copySync(path.join(ownPath, '.stylelintrc'), path.join(appPath, '.stylelintrc'));
+
   fs.copySync(path.join(ownPath, '.vscode'), path.join(appPath, '.vscode'));
+
+  if (tryGitInit(appPath)) {
+    console.log();
+    console.log('Initialized a git repository.');
+  }
 }
