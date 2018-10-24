@@ -95,7 +95,7 @@ function create(appName, appPath) {
     'react-dom': '^16.5.2',
     'react-redux-loading-bar': '2.9.3',
     'react-router-dom': '^4.3.1',
-    resa: '^4.0.0-beta-5',
+    resa: '^4.0.0',
   };
 
   appPackage.devDependencies = {
