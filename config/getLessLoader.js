@@ -59,7 +59,6 @@ module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIde
     options: {
       modifyVars: {
         '@primary-color': '#23b9b9',
-        '@icon-url': `"${env.raw.PUBLIC_URL}/fonts/iconfont"`,
         '@pubg-icon-url': `"${env.raw.PUBLIC_URL}/fonts/pubg"`,
       },
       sourceMap: true,
