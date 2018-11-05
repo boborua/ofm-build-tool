@@ -15,7 +15,7 @@ class App extends React.Component {
           <a className={css.appLink} href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
             Learn React
           </a>
-          <p>version: {global.env.version}</p>
+          <p>version: {process.conf.version}</p>
         </header>
       </div>
     );

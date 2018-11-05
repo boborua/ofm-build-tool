@@ -7,6 +7,6 @@ const path = require('path');
 
 const source = fs.readFileSync(path.join(__dirname, '../src/config/dist.yaml'), { encoding: 'utf-8' });
 
-global.env = yaml.safeLoad(source);
+process.conf = yaml.safeLoad(source);
 
 Enzyme.configure({ adapter: new Adapter() });

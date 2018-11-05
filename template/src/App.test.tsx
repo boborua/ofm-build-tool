@@ -4,19 +4,19 @@ import App from './App';
 import 'jest-enzyme';
 
 describe('environmental variables', () => {
-  const OLD_ENV = global.env;
+  const OLD_ENV = process.conf;
 
   beforeEach(() => {
     jest.resetModules(); // this is important
-    global.env = { ...OLD_ENV };
+    process.conf = { ...OLD_ENV };
   });
 
   afterEach(() => {
-    global.env = OLD_ENV;
+    process.conf = OLD_ENV;
   });
 
   it('change version to dev', () => {
-    global.env.version = 'version-dev';
+    process.conf.version = 'version-dev';
     const wrapper = mount(<App />);
     expect(wrapper).toIncludeText('dev');
   });
@@ -27,7 +27,7 @@ describe('environmental variables', () => {
   });
 
   it('change version to test', () => {
-    global.env.version = 'version-test';
+    process.conf.version = 'version-test';
     const wrapper = mount(<App />);
     expect(wrapper).toIncludeText('test');
   });

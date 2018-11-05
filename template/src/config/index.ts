@@ -11,4 +11,4 @@ if (process.env.NODE_ENV === 'development') {
   config = dist;
 }
 
-global.env = config;
+process.conf = config;

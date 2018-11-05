@@ -1,9 +1,11 @@
-declare module NodeJS {
-  interface Global {
-    env: {
-      version: string;
-      ip: string;
-      nginx: boolean;
-    }
+interface IConf {
+  version: string;
+  ip: string;
+  nginx: boolean;
+}
+
+declare namespace NodeJS {
+  export interface Process {
+    conf: IConf;
   }
 }
