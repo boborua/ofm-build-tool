@@ -5,7 +5,7 @@
   "js-import.codeCompletionAction": false,
   "js-import.filesToScan": "**/*.{jsx,tsx,js,ts}",
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "eslint.options": { "configFile": "node_modules\\@siesam\\build-tool\\config\\.eslintrc" },
-  "tslint.configFile": "node_modules\\@siesam\\build-tool\\config\\tslint.json",
+  "eslint.options": { "configFile": "config\\.eslintrc" },
+  "tslint.configFile": "config\\tslint.json",
   "debug.node.autoAttach": "on"
 }
