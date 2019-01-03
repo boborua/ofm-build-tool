@@ -2,7 +2,7 @@
 
 var cssLoaderGetLocalIdent = require('css-loader/lib/getLocalIdent.js');
 
-function getLocalIdent(context, localIdentName, localName, options) {
+function getLocalIdent(context, _localIdentName, localName, options) {
   const isW = /^win/.test(process.platform);
   let dir = context.resourcePath;
   if (isW) {
@@ -15,7 +15,7 @@ function getLocalIdent(context, localIdentName, localName, options) {
     }
     return 'pubg-' + match[1] + '-' + match[2] + '-' + localName;
   } else {
-    return 'pubg-' + cssLoaderGetLocalIdent(context, localIdentName, localName, options);
+    return 'pubg-' + cssLoaderGetLocalIdent(context, '[local]-[hash:base64:8]', localName, options);
   }
 }
 
