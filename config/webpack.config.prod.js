@@ -159,7 +159,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts', '.yaml'],
+    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts', '.yaml', '.xml', '.bpmn'],
     alias: {},
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -323,6 +323,10 @@ module.exports = {
           {
             test: /\.yaml$/,
             loader: require.resolve('js-yaml-loader'),
+          },
+          {
+            test: /\.(xml|bpmn)$/,
+            loader: require.resolve('raw-loader'),
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
