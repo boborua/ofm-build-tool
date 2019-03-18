@@ -108,11 +108,10 @@ function create(appName, appPath) {
 
   // Setup the script rules
   appPackage.scripts = {
-    start: 'npm run check && npm run locale && cross-env-shell PORT=4000 build-tool start',
-    build: 'npm run check && npm run locale && build-tool build',
+    start: 'npm run check && cross-env-shell PORT=4000 ofm-build-tool start',
+    build: 'npm run check && ofm-build-tool build',
     check: 'node ./scripts/check',
-    test: 'build-tool test --env=jsdom',
-    locale: 'i18n-backend --url https://www.betameo.com/i18n/api/json/project/demo',
+    test: 'ofm-build-tool test --env=jsdom',
     'fix-stylelint': 'stylelint ./src/**/*.{css,less} --fix',
     'fix-prettier': 'prettier --write ./src/**/*.{ts,js,tsx,jsx,less,css}',
     'fix-lint': 'npm run fix-stylelint && npm run fix-prettier',
