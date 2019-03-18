@@ -23,7 +23,8 @@
     "create": "node ./bin/react-scripts.js create",
     "fix-stylelint": "stylelint ./template/src/**/*.{css,less} --fix",
     "fix-prettier": "prettier --write ./template/src/**/*.{ts,js,tsx,jsx,css,less}",
-    "fix-lint": "npm run fix-stylelint && npm run fix-prettier"
+    "fix-lint": "npm run fix-stylelint && npm run fix-prettier",
+    "pb": "npm publish --registry=https://registry.npmjs.org/ --access public"
   },
   "dependencies": {
     "@babel/core": "^7.3.4",
