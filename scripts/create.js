@@ -11,7 +11,7 @@ const execSync = require('child_process').execSync;
 
 function isInGitRepository() {
   try {
-    execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore', cwd: appPath });
+    execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore' });
     return true;
   } catch (e) {
     return false;
@@ -20,9 +20,6 @@ function isInGitRepository() {
 
 function tryGitInit(appPath) {
   let didInit = false;
-  const options = {
-    cwd: appPath
-  }
   try {
     execSync('git --version', { stdio: 'ignore', cwd: appPath });
     if (isInGitRepository(appPath)) {
@@ -34,7 +31,8 @@ function tryGitInit(appPath) {
 
     execSync('git add -A', { stdio: 'ignore', cwd: appPath });
     execSync('git commit -m "Initial commit from Build Tool"', {
-      stdio: 'ignore', cwd: appPath
+      stdio: 'ignore',
+      cwd: appPath,
     });
     return true;
   } catch (e) {
