@@ -36,7 +36,7 @@ function getServedPath(appPackageJson) {
   return ensureSlash(servedUrl, true);
 }
 
-const isBuildTool = require(resolveApp('package.json')).name === '@siesam/build-tool';
+const isBuildTool = require(resolveApp('package.json')).name === '@ofm/build-tool';
 
 module.exports = {
   dotenv: resolveApp('.env'),

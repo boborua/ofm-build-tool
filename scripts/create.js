@@ -81,18 +81,17 @@ function create(appName, appPath) {
   appPackage.privete = true;
 
   appPackage.dependencies = {
-    '@siesam/ajax': '0.1.0',
-    '@siesam/history': '0.0.4',
-    '@siesam/pubgd': '0.1.0-beta-3',
-    antd: '^3.10.0',
+    '@ofm/ajax': '1.0.0',
+    '@ofm/history': '1.0.0',
+    antd: '^3.15.0',
     classnames: '^2.2.5',
     'deep-extend': '^0.6.0',
     'i18n-backend': '^0.1.13',
     'js-cookie': '^2.2.0',
     moment: '2.20.1',
     'query-string': '^5.0.1',
-    react: '^16.5.2',
-    'react-dom': '^16.5.2',
+    react: '^16.8.0',
+    'react-dom': '^16.8.0',
     'react-redux-loading-bar': '2.9.3',
     'react-router-dom': '^4.3.1',
     resa: '^4.0.0',
@@ -100,10 +99,10 @@ function create(appName, appPath) {
 
   appPackage.devDependencies = {
     '@types/node': '^9.6.6',
-    '@types/react': '^16.4.16',
-    '@types/react-dom': '^16.0.9',
+    '@types/react': '^16.8.0',
+    '@types/react-dom': '^16.8.0',
     '@types/react-router-dom': '^4.3.0',
-    '@siesam/build-tool': '^0.1.1',
+    '@ofm/build-tool': '^0.1.1',
     typescript: '^3.1.1',
   };
 
