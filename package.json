@@ -1,6 +1,6 @@
 {
   "name": "@ofm/build-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "repository": "",
   "engines": {
@@ -11,7 +11,13 @@
     "config",
     "scripts",
     "template",
-    "utils"
+    "utils",
+    ".gitignore",
+    "tsconfig.json",
+    "webpack.config.js",
+    ".prettierrc",
+    ".editorconfig",
+    ".stylelintrc"
   ],
   "bin": {
     "ofm-build-tool": "./bin/react-scripts.js"

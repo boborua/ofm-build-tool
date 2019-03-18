@@ -9,6 +9,33 @@ const path = require('path');
 const os = require('os');
 const execSync = require('child_process').execSync;
 
+const gitignore = `# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+debug.log*
+yarn-debug.log*
+yarn-error.log*
+/.idea
+
+src/locale
+src/config/local.yaml
+`;
+
 function isInGitRepository() {
   try {
     execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore' });
@@ -141,7 +168,7 @@ function create(appName, appPath) {
 
   fs.copySync(path.join(ownPath, 'template'), appPath);
 
-  fs.copySync(path.join(ownPath, '.gitignore'), path.join(appPath, '.gitignore'), { overwrite: true });
+  fs.writeFileSync(path.join(appPath, '.gitignore'), gitignore);
 
   fs.copySync(path.join(ownPath, 'tsconfig.json'), path.join(appPath, 'tsconfig.json'));
 
