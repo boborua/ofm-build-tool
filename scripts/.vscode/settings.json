@@ -1,0 +1,13 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "js-import.root": "src",
+    "js-import.alias": {
+    },
+    "js-import.codeCompletionAction": false,
+    "js-import.filesToScan": "**/*.{jsx,tsx,js,ts}",
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "eslint.options": { "configFile": "node_modules\\@ofm\\build-tool\\config\\.eslintrc" },
+    "tslint.configFile": "node_modules\\@ofm\\build-tool\\config\\tslint.json",
+    "prettier.stylelintIntegration": true,
+    "editor.tabSize": 2
+  }

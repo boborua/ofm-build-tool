@@ -102,7 +102,7 @@ function create(appName, appPath) {
     '@types/react': '^16.8.0',
     '@types/react-dom': '^16.8.0',
     '@types/react-router-dom': '^4.3.0',
-    '@ofm/build-tool': '^0.1.1',
+    '@ofm/build-tool': '^1.0.0',
     typescript: '^3.1.1',
   };
 
@@ -167,7 +167,7 @@ function create(appName, appPath) {
 
   fs.copySync(path.join(ownPath, '.stylelintrc'), path.join(appPath, '.stylelintrc'));
 
-  fs.copySync(path.join(ownPath, '.vscode'), path.join(appPath, '.vscode'));
+  fs.copySync(path.join(ownPath, 'scripts/.vscode'), path.join(appPath, '.vscode'));
 
   if (tryGitInit(appPath)) {
     console.log();
