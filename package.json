@@ -1,6 +1,6 @@
 {
   "name": "@ofm/build-tool",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "repository": "",
   "engines": {
@@ -56,6 +56,7 @@
     "cache-loader": "^1.2.5",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
     "chalk": "2.4.1",
+    "core-js": "^3.0.1",
     "cross-env": "^5.2.0",
     "css-loader": "1.0.0",
     "deep-extend": "^0.6.0",
