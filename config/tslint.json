@@ -139,5 +139,8 @@
     "jsx-boolean-value": [true, "always"],
     "jsx-wrap-multiline": false,
     "jsx-no-multiline-js": false
+  },
+  "jsRules": {
+    "no-empty": true
   }
 }
