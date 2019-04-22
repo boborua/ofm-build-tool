@@ -157,7 +157,22 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.jsx', '.md', '.svg', '.tsx', '.ts', '.yaml', '.xml', '.bpmn'],
+    extensions: [
+      '.web.js',
+      '.mjs',
+      '.js',
+      '.json',
+      '.web.jsx',
+      '.jsx',
+      '.jsx',
+      '.md',
+      '.svg',
+      '.tsx',
+      '.ts',
+      '.yaml',
+      '.xml',
+      '.bpmn',
+    ],
     alias: {},
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -306,16 +321,16 @@ module.exports = {
           },
           {
             test: /\.pubg\.less$/,
-            use: getLessLoader(env, true, getLocalIdent),
+            use: getLessLoader(true, getLocalIdent),
           },
           {
             test: /\.modules\.less$/,
-            use: getLessLoader(env, true, undefined, '[name]_[local]-[hash:base64:8]'),
+            use: getLessLoader(true, undefined, '[name]_[local]-[hash:base64:8]'),
           },
           {
             exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            use: getLessLoader(env, false),
+            use: getLessLoader(false),
           },
           {
             test: /\.yaml$/,
