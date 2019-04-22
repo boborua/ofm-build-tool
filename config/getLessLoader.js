@@ -1,12 +1,11 @@
 const autoprefixer = require('autoprefixer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName, shouldUseRelativeAssetPaths) {
+module.exports = function getLessLoader(env, cssModules, getLocalIdent, localIdentName) {
   const loaders = [];
 
   loaders.push({
     loader: MiniCssExtractPlugin.loader,
-    options: Object.assign({}, shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined),
   });
 
   if (cssModules) {

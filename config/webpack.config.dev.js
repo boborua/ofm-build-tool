@@ -29,8 +29,6 @@ const publicUrl = '';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
 
-const shouldUseRelativeAssetPaths = publicPath === './';
-
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -229,7 +227,6 @@ module.exports = {
             use: [
               {
                 loader: MiniCssExtractPlugin.loader,
-                options: Object.assign({}, shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined),
               },
               {
                 loader: require.resolve('css-loader'),
@@ -261,16 +258,16 @@ module.exports = {
           },
           {
             test: /\.pubg\.less$/,
-            use: getLessLoader(env, true, getLocalIdent, undefined, shouldUseRelativeAssetPaths),
+            use: getLessLoader(env, true, getLocalIdent, undefined),
           },
           {
             test: /\.modules\.less$/,
-            use: getLessLoader(env, true, undefined, '[name]_[local]-[hash:base64:8]', shouldUseRelativeAssetPaths),
+            use: getLessLoader(env, true, undefined, '[name]_[local]-[hash:base64:8]'),
           },
           {
             exclude: [/\.modules\.less$/, /\.pubg\.less$/],
             test: /\.less$/,
-            use: getLessLoader(env, false, undefined, undefined, shouldUseRelativeAssetPaths),
+            use: getLessLoader(env, false, undefined, undefined),
           },
           {
             test: /\.yaml$/,
