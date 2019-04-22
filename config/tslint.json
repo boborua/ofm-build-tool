@@ -141,6 +141,8 @@
     "jsx-no-multiline-js": false
   },
   "jsRules": {
-    "no-empty": false
+    "max-line-length": {
+      "options": [999999999999999]
+    }
   }
 }
