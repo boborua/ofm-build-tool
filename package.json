@@ -6,6 +6,7 @@
   "engines": {
     "node": ">=8"
   },
+  "main": "config/index.js",
   "files": [
     "bin",
     "config",

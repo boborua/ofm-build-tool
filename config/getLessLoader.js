@@ -1,7 +1,14 @@
 const autoprefixer = require('autoprefixer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentName) {
+module.exports = function getLessLoader(
+  cssModules,
+  getLocalIdent,
+  localIdentName,
+  modifyVars = {
+    '@primary-color': '#23b9b9',
+  },
+) {
   const loaders = [];
 
   loaders.push({
@@ -56,9 +63,7 @@ module.exports = function getLessLoader(cssModules, getLocalIdent, localIdentNam
   loaders.push({
     loader: require.resolve('less-loader'),
     options: {
-      modifyVars: {
-        '@primary-color': '#23b9b9',
-      },
+      modifyVars: modifyVars,
       sourceMap: true,
     },
   });
